@@ -1,0 +1,480 @@
+/* パスワード管理ツール練習サイト（試作品）の共通スタイル
+   スマホを基本にして、広い画面（パソコン）では2列にする。 */
+
+:root {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --text: #1d1d1b;
+  --muted: #55534e;
+  --border: #d3cfc6;
+  --primary: #1d5bb8;
+  --primary-dark: #164a96;
+  --danger: #b42318;
+  --focus: #f0b400;
+  --info-bg: #e9f1fc;
+  --info-text: #123e7c;
+  --error-bg: #fdecea;
+  --error-text: #7a1b12;
+  --notice-bg: #fff6dc;
+  --notice-border: #b7791f;
+  --notice-title: #6f4500;
+  --radius: 12px;
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  font-size: 112.5%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", Meiryo, "Noto Sans JP", sans-serif;
+  line-height: 1.7;
+}
+
+a {
+  color: var(--primary);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ヘッダー・フッター */
+
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+/* 幅375pxのスマホでも、サイト名と「練習用」が1行に収まる大きさにする */
+.site-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.05rem 0.5rem;
+  border: 1px solid var(--notice-border);
+  border-radius: 999px;
+  background: var(--notice-bg);
+  color: var(--notice-title);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.2rem;
+  margin-left: auto;
+}
+
+.site-nav a[aria-current="page"] {
+  color: var(--text);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.site-footer {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 1rem 1rem 2.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.site-footer p {
+  margin: 0.25rem 0;
+}
+
+/* 本文の並べ方（スマホは1列、パソコンは2列）
+   入力欄など実際のサイトにもある部分（.panel）を先に置き、
+   練習サイトだけの部分（.practice: お知らせ・いまの手順）は、スマホでは後ろ、パソコンでは右に置く。
+   「はじめに」の画面だけは、注意事項（.guide）を先に読んでもらうため、上（パソコンでは右）に置く。 */
+
+.container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 1rem 1rem 2rem;
+}
+
+.page-title {
+  margin: 0.5rem 0 1rem;
+  font-size: 1.6rem;
+  line-height: 1.4;
+}
+
+.layout {
+  display: grid;
+  gap: 1rem;
+}
+
+.panel,
+.guide {
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.guide {
+  border-left: 6px solid var(--primary);
+}
+
+.panel h2,
+.guide h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.2rem;
+}
+
+.guide h3 {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.panel-below {
+  margin-top: 1rem;
+}
+
+.practice {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.practice > .notice {
+  margin: 0;
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-areas: "panel guide";
+    align-items: start;
+    gap: 1.5rem;
+  }
+
+  .layout > .panel {
+    grid-area: panel;
+  }
+
+  .layout > .guide {
+    grid-area: guide;
+    position: sticky;
+    top: 1rem;
+  }
+
+  .layout > .practice {
+    grid-area: guide;
+  }
+}
+
+/* 入力欄 */
+
+.field {
+  margin-bottom: 1.25rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+}
+
+.hint {
+  margin: 0 0 0.4rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+  font-size: 1.1rem;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border-color: var(--primary);
+}
+
+/* 読み取り専用の欄（パスワードの変更の画面のユーザー名）は、書き換えられないことが分かる見た目にする。
+   点線の枠は「練習サイトからのお知らせ」に使っているので、ここでは使わない。 */
+input[readonly] {
+  background: var(--bg);
+}
+
+/* ボタン */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.5rem 1.4rem;
+  border: 2px solid var(--primary);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--primary);
+  font: inherit;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button.primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.button.primary:hover {
+  border-color: var(--primary-dark);
+  background: var(--primary-dark);
+}
+
+.button.danger {
+  border-color: var(--danger);
+  background: var(--danger);
+  color: #fff;
+}
+
+.button.danger-outline {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 600px) {
+  .site-name {
+    font-size: 1.1rem;
+  }
+
+  .button {
+    width: auto;
+  }
+
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+/* 実際のサイトと同じ種類の表示（エラー、完了） */
+
+.message {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid;
+  border-radius: var(--radius);
+}
+
+.message p {
+  margin: 0.2rem 0;
+}
+
+.message .lead {
+  font-weight: 700;
+}
+
+.message.error {
+  border-color: var(--danger);
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.message.info {
+  border-color: var(--primary);
+  background: var(--info-bg);
+  color: var(--info-text);
+}
+
+/* この練習サイトだけの表示（練習サイトからのお知らせ）。実際のサイトの表示と見分けられるようにする。 */
+
+.notice {
+  margin: 0 0 1rem;
+  padding: 0.9rem 1rem;
+  border: 2px dashed var(--notice-border);
+  border-radius: var(--radius);
+  background: var(--notice-bg);
+  overflow-wrap: anywhere;
+}
+
+.notice-title {
+  margin: 0 0 0.4rem;
+  color: var(--notice-title);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.notice-title::before {
+  content: "i";
+  display: inline-grid;
+  place-items: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  margin-right: 0.4rem;
+  border-radius: 50%;
+  background: var(--notice-border);
+  color: #fff;
+  font-family: Georgia, serif;
+  font-size: 0.85rem;
+  font-style: italic;
+  vertical-align: 0.1em;
+}
+
+.notice p {
+  margin: 0.3rem 0;
+}
+
+.notice ul {
+  margin: 0.3rem 0;
+  padding-left: 1.3rem;
+}
+
+.notice .lead {
+  font-weight: 700;
+}
+
+.notice details {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* そのほか */
+
+.steps {
+  margin: 0;
+  padding-left: 1.4rem;
+}
+
+.steps li,
+.cautions li {
+  margin-bottom: 0.5rem;
+}
+
+.cautions {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.small {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.confirm {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 2px solid var(--danger);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.confirm p {
+  margin: 0.3rem 0;
+}
+
+.account-info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 1rem;
+  margin: 0 0 1rem;
+}
+
+.account-info dt {
+  color: var(--muted);
+}
+
+.account-info dd {
+  margin: 0;
+  font-weight: 700;
+  word-break: break-all;
+}
+
+.names {
+  margin: 0.25rem 0 0.75rem;
+  padding-left: 1.2rem;
+}
+
+.names li {
+  word-break: break-all;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 「タップ」と「クリック」の言い分け（マウスで操作する端末では「クリック」） */
+
+.on-mouse {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .on-touch {
+    display: none;
+  }
+
+  .on-mouse {
+    display: inline;
+  }
+}

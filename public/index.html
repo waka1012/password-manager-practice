@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>はじめに | パスワード管理ツール練習サイト</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/index.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="site-name" href="./">パスワード管理ツール練習サイト</a>
+      <span class="badge">練習用</span>
+      <nav class="site-nav" aria-label="メニュー">
+        <a href="./" aria-current="page">はじめに</a>
+        <a href="signup.html">会員登録</a>
+        <a href="login.html">ログイン</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">はじめに</h1>
+    <noscript><p class="message error">このサイトを使うには、JavaScript を有効にしてください。</p></noscript>
+    <div id="message" class="message" role="status" hidden></div>
+
+    <div class="layout">
+      <section class="guide" aria-labelledby="caution-title">
+        <h2 id="caution-title">はじめに読んでください</h2>
+        <ul class="cautions">
+          <li><strong>本物のパスワードは使わないでください。</strong>ユーザー名は練習用の名前（例: renshu-01）にし、パスワードはパスワード管理ツールが提案するものを使います。</li>
+          <li>入力した内容は、この端末のこのブラウザの中にだけ保存されます。どこにも送信されません。</li>
+          <li>このサイトが、Apple アカウントや銀行などの本物の情報を聞くことはありません。</li>
+          <li>練習データは、しばらく使わないと自動で消えることがあります（Safari では、使った日で数えて7日間）。パスワード管理ツールに保存した項目は消えません。</li>
+        </ul>
+      </section>
+
+      <section class="panel" aria-labelledby="about-title">
+        <h2 id="about-title">このサイトについて</h2>
+        <p>パスワード管理ツール（iPhone の「パスワード」アプリなど）で、パスワードの「保存」と「自動入力」を練習するためのサイトです。</p>
+        <h2>練習の流れ</h2>
+        <ol class="steps">
+          <li>会員登録をして、パスワードをパスワード管理ツールに保存します。</li>
+          <li>パスワード管理ツールに保存されたかを確かめます。</li>
+          <li>ログアウトします。</li>
+          <li>自動入力でログインして、答え合わせをします。</li>
+          <li>慣れてきたら、2つ目のアカウントを登録したり、パスワードを変更したりします。管理ツールの項目を取り違えたり、上書きしたりせずに、保存・更新・自動入力できるかを練習します。</li>
+          <li>アカウントを削除すれば、何度でもやり直せます。</li>
+        </ol>
+        <div class="actions">
+          <a class="button primary" href="signup.html">会員登録へ進む</a>
+          <a class="button" href="login.html">ログインへ進む</a>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel panel-below" aria-labelledby="data-title">
+      <h2 id="data-title">この端末の練習データ</h2>
+      <aside id="notice" class="notice" hidden>
+        <p class="notice-title">練習サイトからのお知らせ</p>
+        <div class="notice-body"></div>
+      </aside>
+      <div id="data-summary"></div>
+
+      <h2>全部リセット</h2>
+      <p>練習データをすべて消して、最初からやり直せます。パスワード管理ツールに保存した項目は消えないので、必要に応じて管理ツールから削除してください。</p>
+      <div id="reset-result" class="message info" role="status" hidden></div>
+      <button type="button" id="reset-open" class="button danger-outline">全部リセットする</button>
+      <div id="reset-confirm" class="confirm" hidden>
+        <p><strong>練習データをすべて消しますか？</strong></p>
+        <p>この操作は元に戻せません。</p>
+        <div class="actions">
+          <button type="button" id="reset-do" class="button danger">すべて消す</button>
+          <button type="button" id="reset-cancel" class="button">やめる</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>このサイトは、パスワード管理ツールの練習用です。本物のパスワードや個人情報は入力しないでください。</p>
+    <p>入力した内容は、この端末のこのブラウザの中にだけ保存され、どこにも送信されません。</p>
+  </footer>
+</body>
+</html>
