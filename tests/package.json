@@ -1,0 +1,15 @@
+{
+  "name": "password-manager-practice-tests",
+  "private": true,
+  "description": "パスワード管理ツール練習サイトの自動テスト（公開されるファイルには含まれません）",
+  "type": "module",
+  "scripts": {
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "node --test \"unit/*.test.js\"",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "wrangler": "4.149.0"
+  }
+}

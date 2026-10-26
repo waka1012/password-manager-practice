@@ -1,2 +1,6 @@
 # wrangler が手元で動かすときに作るフォルダ
 .wrangler/
+# 自動テストで作られるもの
+tests/node_modules/
+tests/test-results/
+tests/playwright-report/
