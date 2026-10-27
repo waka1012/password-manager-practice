@@ -27,21 +27,36 @@
     <div id="message" class="message" role="status" hidden></div>
 
     <div class="layout">
-      <section class="panel" aria-labelledby="account-title">
-        <h2 id="account-title"><span id="user-name"></span> さん、ようこそ</h2>
-        <dl class="account-info">
-          <dt>ユーザー名</dt>
-          <dd id="info-username"></dd>
-          <dt>登録日時</dt>
-          <dd id="info-created"></dd>
-          <dt id="info-changed-label" hidden>パスワードの変更日時</dt>
-          <dd id="info-changed" hidden></dd>
-        </dl>
-        <div class="actions">
-          <button type="button" id="logout" class="button primary">ログアウト</button>
-          <a id="change-password" class="button" href="change-password.html">パスワードを変更する</a>
-        </div>
-      </section>
+      <div class="stack">
+        <section class="panel" aria-labelledby="account-title">
+          <h2 id="account-title"><span id="user-name"></span> さん、ようこそ</h2>
+          <dl class="account-info">
+            <dt>ユーザー名</dt>
+            <dd id="info-username"></dd>
+            <dt>登録日時</dt>
+            <dd id="info-created"></dd>
+            <dt id="info-changed-label" hidden>パスワードの変更日時</dt>
+            <dd id="info-changed" hidden></dd>
+          </dl>
+          <div class="actions">
+            <button type="button" id="logout" class="button primary">ログアウト</button>
+            <a id="change-password" class="button" href="change-password.html">パスワードを変更する</a>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="passkey-title">
+          <h2 id="passkey-title">パスキー</h2>
+          <p>パスキーを作成すると、パスワードを入力しなくても、顔・指紋・画面ロックでログインできます。</p>
+          <div id="passkey-message" class="message" role="status" hidden></div>
+          <p id="passkey-empty">このアカウントのパスキーは、まだありません。</p>
+          <ul id="passkey-list" class="passkey-list" hidden></ul>
+          <button type="button" id="passkey-create" class="button primary">パスキーを作成する</button>
+          <aside id="passkey-notice" class="notice notice-below" hidden>
+            <p class="notice-title">練習サイトからのお知らせ</p>
+            <div class="notice-body"></div>
+          </aside>
+        </section>
+      </div>
 
       <div class="practice">
         <aside id="notice" class="notice" hidden>
@@ -99,19 +114,6 @@
         </section>
       </div>
     </div>
-
-    <section class="panel panel-below" aria-labelledby="passkey-title">
-      <h2 id="passkey-title">パスキー</h2>
-      <p>パスキーを作成すると、パスワードを入力しなくても、顔・指紋・画面ロックでログインできます。</p>
-      <div id="passkey-message" class="message" role="status" hidden></div>
-      <p id="passkey-empty">このアカウントのパスキーは、まだありません。</p>
-      <ul id="passkey-list" class="passkey-list" hidden></ul>
-      <button type="button" id="passkey-create" class="button primary">パスキーを作成する</button>
-      <aside id="passkey-notice" class="notice notice-below" hidden>
-        <p class="notice-title">練習サイトからのお知らせ</p>
-        <div class="notice-body"></div>
-      </aside>
-    </section>
 
     <section class="panel panel-below" aria-labelledby="delete-title">
       <h2 id="delete-title">アカウントの削除</h2>

@@ -1,6 +1,6 @@
 // 各画面の作りのテスト（管理ツールが読み取る属性、セキュリティ設定、スマホとパソコンの表示）
 
-import { test, expect } from './fixtures.js';
+import { test, expect, signUp } from './fixtures.js';
 
 const PAGES = ['/', '/signup.html', '/login.html'];
 
@@ -51,6 +51,24 @@ test('入力欄が先に見え、お知らせと手順はスマホでは下、�
     expect(practice.y).toBeGreaterThan(form.y + form.height);
   } else {
     expect(practice.x).toBeGreaterThan(form.x + form.width);
+  }
+});
+
+test('マイページ: パスキーの欄は、アカウントの欄のすぐ下に置く（パソコンでは左の列）', async ({ page, isMobile }) => {
+  await signUp(page, 'renshu-01');
+  const account = await page.locator('section[aria-labelledby="account-title"]').boundingBox();
+  const passkey = await page.locator('section[aria-labelledby="passkey-title"]').boundingBox();
+  const practice = await page.locator('.practice').boundingBox();
+
+  expect(passkey.y).toBeGreaterThan(account.y + account.height);
+  expect(passkey.y - (account.y + account.height)).toBeLessThan(40);
+  expect(passkey.x).toBeCloseTo(account.x, 0);
+  if (isMobile) {
+    // お知らせと手順は、パスキーの欄の下
+    expect(practice.y).toBeGreaterThan(passkey.y + passkey.height);
+  } else {
+    // お知らせと手順は、右の列
+    expect(practice.x).toBeGreaterThan(passkey.x + passkey.width);
   }
 });
 
