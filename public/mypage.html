@@ -27,21 +27,36 @@
     <div id="message" class="message" role="status" hidden></div>
 
     <div class="layout">
-      <section class="panel" aria-labelledby="account-title">
-        <h2 id="account-title"><span id="user-name"></span> さん、ようこそ</h2>
-        <dl class="account-info">
-          <dt>ユーザー名</dt>
-          <dd id="info-username"></dd>
-          <dt>登録日時</dt>
-          <dd id="info-created"></dd>
-          <dt id="info-changed-label" hidden>パスワードの変更日時</dt>
-          <dd id="info-changed" hidden></dd>
-        </dl>
-        <div class="actions">
-          <button type="button" id="logout" class="button primary">ログアウト</button>
-          <a id="change-password" class="button" href="change-password.html">パスワードを変更する</a>
-        </div>
-      </section>
+      <div class="stack">
+        <section class="panel" aria-labelledby="account-title">
+          <h2 id="account-title"><span id="user-name"></span> さん、ようこそ</h2>
+          <dl class="account-info">
+            <dt>ユーザー名</dt>
+            <dd id="info-username"></dd>
+            <dt>登録日時</dt>
+            <dd id="info-created"></dd>
+            <dt id="info-changed-label" hidden>パスワードの変更日時</dt>
+            <dd id="info-changed" hidden></dd>
+          </dl>
+          <div class="actions">
+            <button type="button" id="logout" class="button primary">ログアウト</button>
+            <a id="change-password" class="button" href="change-password.html">パスワードを変更する</a>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="passkey-title">
+          <h2 id="passkey-title">パスキー</h2>
+          <p>パスキーを作成すると、パスワードを入力しなくても、顔・指紋・画面ロックでログインできます。</p>
+          <div id="passkey-message" class="message" role="status" hidden></div>
+          <p id="passkey-empty">このアカウントのパスキーは、まだありません。</p>
+          <ul id="passkey-list" class="passkey-list" hidden></ul>
+          <button type="button" id="passkey-create" class="button primary">パスキーを作成する</button>
+          <aside id="passkey-notice" class="notice notice-below" hidden>
+            <p class="notice-title">練習サイトからのお知らせ</p>
+            <div class="notice-body"></div>
+          </aside>
+        </section>
+      </div>
 
       <div class="practice">
         <aside id="notice" class="notice" hidden>
@@ -74,7 +89,18 @@
               <li>もう一度試す: 「ログアウト」を押して、ログインからやり直します。</li>
               <li id="next-add-account">アカウントを増やす: 「ログアウト」を押してから、会員登録で別のユーザー名（例: <span class="js-next-name"></span>）を登録します。保存や自動入力のときに、アカウントを取り違えないかを練習します。</li>
               <li>パスワードを変更する: 「パスワードを変更する」を押します。管理ツールの項目が、正しく更新されるかを練習します。</li>
+              <li>パスキーを試す: 下の「パスキー」の欄で、パスキーを作成します。ログアウトしてから、パスキーでログインしてみましょう。</li>
               <li>最初からやり直す: アカウントを削除してから、会員登録をします。パスワード管理ツールの項目をどうするかも、試してみましょう。</li>
+            </ul>
+          </div>
+          <div id="guide-passkey" hidden>
+            <p>パスキーでログインできたら、この練習は成功です。</p>
+            <p id="guide-passkey-multi" hidden>練習用アカウントが複数あります。ログインしたアカウント（「<span class="js-username"></span>」）が、ログインしたかったものかを確かめましょう。</p>
+            <h3>次の練習</h3>
+            <ul class="steps">
+              <li>もう一度試す: 「ログアウト」を押して、パスキーでログインし直します。</li>
+              <li>アカウントを増やす: 別のアカウントでもパスキーを作成し、ログインのときに、パスキーを選び分けられるかを練習します。</li>
+              <li>パスキーを削除する: 下の「パスキー」の欄で、パスキーを削除します。そのあとログアウトして、パスワード管理ツールに残ったパスキーでログインしようとすると、どうなるかを試します。</li>
             </ul>
           </div>
           <div id="guide-password" hidden>
@@ -96,7 +122,7 @@
       <button type="button" id="delete-open" class="button danger-outline">アカウントを削除する</button>
       <div id="delete-confirm" class="confirm" hidden>
         <p><strong>本当に削除しますか？</strong></p>
-        <p>削除すると、このアカウントではログインできなくなります。パスワード管理ツールに保存した項目は、自動では消えません。</p>
+        <p>削除すると、このアカウントではログインできなくなります。パスワード管理ツールに保存したパスワードは、自動では消えません。パスキーは、管理ツールによっては、自動で消えたり隠れたりします。</p>
         <aside class="notice">
           <p class="notice-title">練習サイトからのお知らせ</p>
           <p>削除したアカウントのパスワードは、答え合わせのために、元に戻せない形（ハッシュ値）で残します。すべて消すときは、「はじめに」の画面の「全部リセット」を使います。</p>

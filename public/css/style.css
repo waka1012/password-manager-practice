@@ -178,6 +178,13 @@ summary:focus-visible {
   margin: 0;
 }
 
+/* 実際のサイトにもある部分を、縦に並べてまとめる（マイページ: アカウントとパスキー）。パソコンでは左の列になる。 */
+.stack {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
 @media (min-width: 900px) {
   .layout {
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
@@ -186,7 +193,8 @@ summary:focus-visible {
     gap: 1.5rem;
   }
 
-  .layout > .panel {
+  .layout > .panel,
+  .layout > .stack {
     grid-area: panel;
   }
 
@@ -449,6 +457,61 @@ input[readonly] {
 
 .names li {
   word-break: break-all;
+}
+
+/* パスキー（マイページの一覧、ログインの画面の「または」） */
+
+.passkey-list {
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.passkey-list > li {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.passkey-list .actions {
+  margin-top: 0.5rem;
+}
+
+.passkey-name {
+  margin: 0;
+  font-weight: 700;
+}
+
+.passkey-meta {
+  margin: 0.1rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.alt-login {
+  margin-top: 1.25rem;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--border);
+}
+
+/* ボタンの下に置く「練習サイトからのお知らせ」 */
+.notice-below {
+  margin: 1rem 0 0;
 }
 
 .visually-hidden {
