@@ -6,6 +6,7 @@ import { installStorage } from './helpers.js';
 import {
   listAccounts, findAccount, saveAccount, removeAccount, historyFor, addHistory, listHistory,
   hasAnyData, resetAll, getSession, setSession, clearSession, setFlash, takeFlash, isStorageAvailable,
+  listPasskeys, findPasskey, passkeysFor, savePasskey, removePasskey, removePasskeysFor,
 } from '../../public/js/store.js';
 
 beforeEach(() => installStorage());
@@ -69,6 +70,25 @@ test('全部リセットは、接頭辞 "pp." のデータだけを消す', () =
   assert.equal(getSession(), null);
   assert.equal(localStorage.getItem('other'), 'keep');
   assert.equal(sessionStorage.getItem('other'), 'keep');
+});
+
+test('パスキーの記録: 保存・置き換え・削除。全部リセットで消える', () => {
+  savePasskey({ id: 'a', username: 'renshu-01', lastUsedAt: null });
+  savePasskey({ id: 'b', username: 'renshu-02', lastUsedAt: null });
+  savePasskey({ id: 'a', username: 'renshu-01', lastUsedAt: 'now' });
+  assert.deepEqual(listPasskeys().map((p) => `${p.id}:${p.lastUsedAt}`), ['a:now', 'b:null']);
+  assert.deepEqual(passkeysFor('renshu-02').map((p) => p.id), ['b']);
+  assert.equal(findPasskey('c'), null);
+  assert.equal(hasAnyData(), true);
+
+  removePasskey('a');
+  assert.deepEqual(listPasskeys().map((p) => p.id), ['b']);
+  removePasskeysFor('renshu-02');
+  assert.equal(hasAnyData(), false);
+
+  savePasskey({ id: 'c', username: 'renshu-01' });
+  resetAll();
+  assert.deepEqual(listPasskeys(), []);
 });
 
 test('ログイン状態を保存・消去できる', () => {

@@ -1,5 +1,5 @@
 // 練習データの保存・読み出し
-// - アカウントと以前のパスワードの記録: localStorage（この端末のこのブラウザの中だけ）
+// - アカウント、以前のパスワードの記録、パスキーの記録: localStorage（この端末のこのブラウザの中だけ）
 // - ログイン状態と、画面をまたぐ一度きりの表示: sessionStorage（タブを閉じると消える）
 // キーにはすべて接頭辞 "pp." を付ける。
 
@@ -7,6 +7,7 @@ const PREFIX = 'pp.';
 const KEYS = {
   accounts: PREFIX + 'accounts',
   history: PREFIX + 'history',
+  passkeys: PREFIX + 'passkeys',
   session: PREFIX + 'session',
   flash: PREFIX + 'flash',
 };
@@ -96,8 +97,40 @@ export function addHistory(entry, limitPerUser) {
   writeJson('local', KEYS.history, kept);
 }
 
+// パスキーの記録（認証情報ID、どのアカウントのものか、公開鍵など）。
+// 秘密鍵はパスワード管理ツールの中にあり、ここには来ない。
+
+export function listPasskeys() {
+  return readList(KEYS.passkeys).filter((passkey) => typeof passkey.id === 'string');
+}
+
+export function findPasskey(id) {
+  return listPasskeys().find((passkey) => passkey.id === id) || null;
+}
+
+export function passkeysFor(username) {
+  return listPasskeys().filter((passkey) => passkey.username === username);
+}
+
+// 同じ認証情報IDがあれば置き換える（最後に使った日時の更新など。並び順は変えない）
+export function savePasskey(record) {
+  const list = listPasskeys();
+  const index = list.findIndex((passkey) => passkey.id === record.id);
+  if (index === -1) list.push(record);
+  else list[index] = record;
+  writeJson('local', KEYS.passkeys, list);
+}
+
+export function removePasskey(id) {
+  writeJson('local', KEYS.passkeys, listPasskeys().filter((passkey) => passkey.id !== id));
+}
+
+export function removePasskeysFor(username) {
+  writeJson('local', KEYS.passkeys, listPasskeys().filter((passkey) => passkey.username !== username));
+}
+
 export function hasAnyData() {
-  return listAccounts().length > 0 || listHistory().length > 0;
+  return listAccounts().length > 0 || listHistory().length > 0 || listPasskeys().length > 0;
 }
 
 // 全部リセット: 接頭辞 "pp." の付いたデータを、localStorage と sessionStorage の両方から消す

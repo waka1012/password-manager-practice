@@ -3,7 +3,7 @@
 // パスワードそのものは保存せず、PBKDF2（HMAC-SHA-256、ソルト付き）のハッシュ値だけを保存する。
 
 import {
-  listAccounts, findAccount, saveAccount, removeAccount, addHistory, historyFor, hasAnyData,
+  listAccounts, findAccount, saveAccount, removeAccount, addHistory, historyFor, hasAnyData, removePasskeysFor,
 } from './store.js';
 
 // OWASP の推奨（PBKDF2-HMAC-SHA-256 では60万回以上）。iPhone での速さを見て見直す。
@@ -129,10 +129,12 @@ export async function changePassword(username, currentPassword, newPassword) {
 }
 
 // アカウントを削除する。ハッシュ値は、答え合わせ用に「以前のパスワードの記録」へ移す。
+// パスキーの記録も消す（管理ツールへの知らせは、画面の側で Signal API を使って行う。passkey.js）。
 export function deleteAccount(username) {
   const account = findAccount(username);
   if (!account) return false;
   retire(account, 'deleted');
   removeAccount(username);
+  removePasskeysFor(username);
   return true;
 }
