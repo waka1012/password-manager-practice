@@ -82,7 +82,7 @@ test('ログインの失敗: 実際のサイトと同じ表示と、答え合わ
 
   await page.locator('#username').fill('renshu-01');
   await page.locator('#password').pressSequentially('wrong-password');
-  await page.getByRole('button', { name: 'ログイン' }).click();
+  await page.getByRole('button', { name: 'ログイン', exact: true }).click();
   await expect(page.locator('#message')).toHaveText('ユーザー名またはパスワードが正しくありません。');
   await expect(notice(page)).toContainText('パスワードが、登録したときのものと違います。');
   await expect(notice(page)).toContainText('入力のしかた（目安）: 手入力');

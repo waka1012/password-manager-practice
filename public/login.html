@@ -31,7 +31,7 @@
         <form id="login-form" novalidate>
           <div class="field">
             <label for="username">ユーザー名</label>
-            <input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="email" required>
+            <input id="username" name="username" type="text" autocomplete="username webauthn" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="email" required>
           </div>
           <div class="field">
             <label for="password">パスワード</label>
@@ -39,6 +39,10 @@
           </div>
           <button type="submit" class="button primary">ログイン</button>
         </form>
+        <div id="passkey-area" class="alt-login" hidden>
+          <p class="divider">または</p>
+          <button type="button" id="passkey-login" class="button">パスキーでログイン</button>
+        </div>
         <p>はじめての方は <a href="signup.html">会員登録</a></p>
       </section>
 
@@ -56,6 +60,13 @@
             <li>ユーザー名とパスワードが自動で入力されたら、「ログイン」を押します。</li>
           </ol>
           <p class="small">候補が出ないときは、パスワード管理ツールに保存されていない可能性があります。管理ツールを開いて確かめるか、会員登録からやり直しましょう。</p>
+          <div id="guide-passkey" hidden>
+            <h3>パスキーを作成したとき</h3>
+            <ol class="steps">
+              <li>ユーザー名の欄を<span class="on-touch">タップ</span><span class="on-mouse">クリック</span>すると、候補にパスキーが出ることがあります。パスキーを選び、顔・指紋・画面ロックで確かめると、ログインできます。</li>
+              <li>候補にパスキーが出ないときは、「パスキーでログイン」を押して、ログインしたいアカウントのパスキーを選びます。</li>
+            </ol>
+          </div>
         </section>
       </div>
     </div>

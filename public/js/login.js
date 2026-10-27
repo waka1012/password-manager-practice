@@ -1,10 +1,14 @@
 // ログインの画面
 // 失敗したときは、実際のサイトと同じく「ユーザー名またはパスワードが正しくありません」とだけ表示し、
 // 詳しい答え合わせは「練習サイトからのお知らせ」に分けて表示する。
+// パスキーでもログインできる（自動入力の候補から選ぶか、「パスキーでログイン」を押す）。
 
 import { setSession, takeFlash, isStorageAvailable } from './store.js';
 import { checkLogin, isCryptoAvailable } from './auth.js';
 import { trackInput, methodLabel } from './input-check.js';
+import {
+  isPasskeyAvailable, isAutofillAvailable, getPasskey, providerName, signalUnknownPasskey,
+} from './passkey.js';
 import {
   h, showMessage, hideMessage, showNotice, hideNotice, setBusy,
   insecureContextNotice, storageUnavailableNotice, otherDeviceNote,
@@ -183,3 +187,119 @@ form.addEventListener('submit', async (event) => {
     h('p', { class: 'small' }, `入力のしかた（目安）: ${methodLabel(inputMethod.method)}`));
   fail('ユーザー名またはパスワードが正しくありません。');
 });
+
+// パスキーでのログイン
+// - 自動入力: ページを開いたときに呼び出しを始め、ユーザー名の欄の候補にパスキーを出す（autocomplete="username webauthn"）
+// - 「パスキーでログイン」: 自動入力の呼び出しを止めてから、パスキーを選ぶ画面を出す
+
+const passkeyButton = document.getElementById('passkey-login');
+// パスキーが選ばれて、確認まで進んだときの結果（passkey.js の checkPasskeyLogin）
+const CHECKED_STATUSES = new Set(['ok', 'no-data', 'unknown', 'invalid']);
+let autofillRequest = null;
+
+function startPasskeyAutofill() {
+  isAutofillAvailable().then((available) => {
+    if (!available || autofillRequest) return;
+    const controller = new AbortController();
+    autofillRequest = controller;
+    getPasskey({ conditional: true, signal: controller.signal }).then((result) => {
+      if (autofillRequest === controller) autofillRequest = null;
+      // 候補からパスキーが選ばれたときだけ、結果を出す。呼び出しそのものの失敗（止めた、閉じた、
+      // この端末では使えない、など）は、何も出さない。すぐに失敗する環境で繰り返さないよう、呼び出し直しもしない。
+      if (CHECKED_STATUSES.has(result.status) && !busy) finishPasskeyLogin(result);
+    });
+  });
+}
+
+function stopPasskeyAutofill() {
+  if (!autofillRequest) return;
+  autofillRequest.abort();
+  autofillRequest = null;
+}
+
+function explainPasskeyFailure(result, signaled) {
+  switch (result.status) {
+    case 'unknown':
+    case 'no-data':
+      return [
+        h('p', { class: 'lead' }, result.username
+          ? `選んだのは、練習用アカウント「${result.username}」のパスキーですが、この練習サイトには登録されていません。`
+          : '選んだパスキーは、この練習サイトには登録されていません。'),
+        h('p', {}, '考えられる理由:'),
+        h('ul', {},
+          h('li', {}, result.username ? 'マイページで、このパスキーを削除した' : '練習用アカウントを削除した'),
+          h('li', {}, '「はじめに」の画面の「全部リセット」で、練習データを消した'),
+          h('li', {}, 'しばらく使わなかったため、練習データが自動で消えた（Safari では、使った日で数えて7日間）')),
+        h('p', {}, '練習サイトでパスキーを削除しても、パスワード管理ツールのパスキーは、そのまま残ることがあります。'),
+        h('p', {}, signaled
+          ? 'この練習サイトから、パスワード管理ツールに「このパスキーはもう使えない」と知らせました。管理ツールによっては、このパスキーが自動で削除されます。'
+          : 'このブラウザは、パスワード管理ツールに知らせる仕組みに対応していません。'),
+        h('p', {}, '管理ツールを開いて、このサイトのパスキーが残っていたら、削除しましょう。'),
+      ];
+    case 'cancelled':
+      return [
+        h('p', { class: 'lead' }, 'パスキーを選ぶ画面が閉じられたか、時間切れになりました。'),
+        h('p', {}, 'パスキーの候補が出なかったときは、パスワード管理ツールに、このサイトのパスキーがないのかもしれません。パスワードでログインしてから、マイページでパスキーを作成しましょう。'),
+      ];
+    default:
+      return [
+        h('p', { class: 'lead' }, 'パスキーを確かめられませんでした。'),
+        h('p', {}, 'もう一度お試しください。続くときは、パスワードでログインしてください。'),
+      ];
+  }
+}
+
+function startPasskeySession(result) {
+  try {
+    setSession({
+      username: result.username,
+      via: 'passkey',
+      at: new Date().toISOString(),
+      passkey: {
+        provider: providerName(result.passkey.aaguid),
+        synced: result.passkey.backupEligible,
+        userVerified: result.userVerified,
+      },
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function finishPasskeyLogin(result) {
+  if (result.status === 'ok' && startPasskeySession(result)) {
+    location.assign('mypage.html');
+    return;
+  }
+  hideMessage(message);
+  hideNotice(notice);
+  // 練習サイトに記録のないパスキーは、管理ツールに知らせる（ほかの端末で作ったものかは区別しない。構成案 3.1）
+  const unknown = result.status === 'unknown' || result.status === 'no-data';
+  const signaled = unknown && Boolean(signalUnknownPasskey(result.id));
+  showNotice(notice, h('p', { class: 'small' }, '答え合わせ'), ...explainPasskeyFailure(result, signaled));
+  if (result.status === 'cancelled') showMessage(message, 'パスキーでのログインを、やめました。', 'info');
+  else fail('パスキーでログインできませんでした。');
+  startPasskeyAutofill();
+}
+
+if (isCryptoAvailable() && isStorageAvailable() && isPasskeyAvailable()) {
+  document.getElementById('passkey-area').hidden = false;
+  document.getElementById('guide-passkey').hidden = false;
+  startPasskeyAutofill();
+
+  passkeyButton.addEventListener('click', () => {
+    if (busy) return;
+    // Safari では、ボタンを押した処理の中で、待ち時間を挟まずに呼び出す必要がある
+    stopPasskeyAutofill();
+    busy = true;
+    hideMessage(message);
+    hideNotice(notice);
+    setBusy(passkeyButton, true, '確認しています…');
+    getPasskey().then((result) => {
+      busy = false;
+      setBusy(passkeyButton, false);
+      finishPasskeyLogin(result);
+    });
+  });
+}

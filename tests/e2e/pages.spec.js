@@ -25,7 +25,8 @@ test('パスワード管理ツールが読み取る autocomplete 属性', async 
   await expect(page.locator('#password-confirm')).toHaveAttribute('autocomplete', 'new-password');
 
   await page.goto('/login.html');
-  await expect(page.locator('#username')).toHaveAttribute('autocomplete', 'username');
+  // ログインの画面では、パスキーも候補に出す
+  await expect(page.locator('#username')).toHaveAttribute('autocomplete', 'username webauthn');
   await expect(page.locator('#password')).toHaveAttribute('autocomplete', 'current-password');
 });
 

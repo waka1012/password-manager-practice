@@ -1,7 +1,10 @@
 // 「はじめに」の画面: この端末の練習データの表示と、全部リセット
 
-import { listAccounts, listHistory, resetAll, isStorageAvailable, takeFlash } from './store.js';
+import {
+  listAccounts, listHistory, passkeysFor, resetAll, isStorageAvailable, takeFlash,
+} from './store.js';
 import { ACCOUNT_LIMIT } from './auth.js';
+import { signalAcceptedPasskeys } from './passkey.js';
 import { h, showMessage, showNotice, storageUnavailableNotice } from './ui.js';
 
 const message = document.getElementById('message');
@@ -11,8 +14,9 @@ const summary = document.getElementById('data-summary');
 const FLASH_MESSAGES = new Map([
   ['deleted', [
     'アカウントを削除しました。',
-    'パスワード管理ツールに保存した項目は、自動では消えません。最初からやり直すときは、管理ツールの項目も削除しましょう。'
-      + '項目を残したまま同じユーザー名で登録すると、「パスワードを更新しますか？」と聞かれる動きも試せます。',
+    'パスワード管理ツールに保存したパスワードは、自動では消えません。パスキーは、管理ツールによっては、自動で消えたり隠れたりします。'
+      + '最初からやり直すときは、管理ツールに残った項目も削除しましょう。'
+      + 'パスワードを残したまま同じユーザー名で登録すると、「パスワードを更新しますか？」と聞かれる動きも試せます。',
   ]],
 ]);
 
@@ -31,7 +35,10 @@ function renderSummary() {
     parts.push(h('p', {}, '練習用アカウントは、まだありません。'));
   } else {
     parts.push(h('p', {}, `練習用アカウント: ${accounts.length}件（${ACCOUNT_LIMIT}件まで登録できます）`));
-    parts.push(h('ul', { class: 'names' }, accounts.map((account) => h('li', {}, account.username))));
+    parts.push(h('ul', { class: 'names' }, accounts.map((account) => {
+      const passkeys = passkeysFor(account.username).length;
+      return h('li', {}, passkeys > 0 ? `${account.username}（パスキー: ${passkeys}件）` : account.username);
+    })));
   }
   if (history.length > 0) {
     parts.push(h('p', { class: 'small' },
@@ -60,18 +67,23 @@ document.getElementById('reset-cancel').addEventListener('click', () => {
 });
 
 document.getElementById('reset-do').addEventListener('click', () => {
+  // パスキーを作ったことのあるアカウント（user.id があるもの）
+  const userIds = listAccounts().map((account) => account.userId).filter(Boolean);
   try {
     resetAll();
   } catch {
     showMessage(resetResult, '練習データを消せませんでした。', 'error');
     return;
   }
+  // 管理ツールに、どのパスキーも使えなくなったことを知らせる（結果は待たない）
+  userIds.forEach((userId) => signalAcceptedPasskeys(userId, []));
   resetConfirm.hidden = true;
   resetOpen.hidden = false;
   message.hidden = true;
   renderSummary();
   showMessage(resetResult, [
     '練習データをすべて消しました。',
-    'パスワード管理ツールに保存した項目は、残っています。必要に応じて、管理ツールから削除してください。',
+    'パスワード管理ツールに保存したパスワードは、残っています。パスキーは、管理ツールによっては、自動で消えたり隠れたりします。'
+      + '残っている項目は、必要に応じて、管理ツールから削除してください。',
   ], 'info');
 });
